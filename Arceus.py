@@ -1,84 +1,92 @@
 import tkinter as tk
+import os
 from PIL import ImageTk, Image
 import random
 from datetime import date
 
 # Dados das cartas de tarot (exemplo)
 cartas = [
-    {"nome": "Carta 1", "imagem": "carta1.png", "significado": "Significado da Carta 1"},
-    {"nome": "Carta 2", "imagem": "carta2.png", "significado": "Significado da Carta 2"},
-    {"nome": "Carta 3", "imagem": "carta3.png", "significado": "Significado da Carta 3"},
+    {"nome": "Carta 1", "imagem": "imgs/1.png", "significado": "Significado da Carta 1"},
+    {"nome": "Carta 2", "imagem": "imgs/2.png", "significado": "Significado da Carta 2"},
+    {"nome": "Carta 3", "imagem": "imgs/3.png", "significado": "Significado da Carta 3"},
     # Adicione aqui as informações das outras cartas
 ]
 
 def obter_cartas_aleatorias():
     return random.sample(cartas, 3)
 
-def gerar_leitura():
-    cartas_selecionadas = obter_cartas_aleatorias()
-    leitura = "Leitura Diária\n\n"
-    
-    for carta in cartas_selecionadas:
-        leitura += f"{carta['nome']}: {carta['significado']}\n\n"
-    
-    return leitura
+def virar_carta(carta, label):
+    frente = ImageTk.PhotoImage(Image.open(carta["imagem"]))
+    label.configure(image=frente)
+    label.image = frente
+    mostrar_leitura(carta)
+    # Desabilitar seleção após a primeira carta virada
+    for l in label_cartas:
+        l.unbind("<Button-1>")
+        l.configure(cursor="arrow")
 
-def exibir_leitura():
-    leitura = gerar_leitura()
-    texto_leitura.configure(state=tk.NORMAL)
-    texto_leitura.delete("1.0", tk.END)
-    texto_leitura.insert(tk.END, leitura)
+def mostrar_leitura(carta):
+    janela_leitura = tk.Toplevel(janela)
+    janela_leitura.title("Leitura da Carta")
+    janela_leitura.geometry("400x300")
+    texto_leitura = tk.Text(janela_leitura, width=40, height=10)
+    texto_leitura.pack()
+    texto_leitura.insert(tk.END, f"{carta['nome']}: {carta['significado']}\n")
     texto_leitura.configure(state=tk.DISABLED)
 
-def verificar_data():
-    data_atual = date.today().isoformat()
-    
-    with open("ultima_execucao.txt", "r+") as arquivo:
-        ultima_execucao = arquivo.read().strip()
-        
-        if ultima_execucao != data_atual:
-            arquivo.seek(0)
-            arquivo.write(data_atual)
-            arquivo.truncate()
-            exibir_leitura()
+# Verificar se já foi selecionada uma carta hoje
+def verificar_carta_selecionada():
+    hoje = date.today()
+    data_str = hoje.strftime("%Y-%m-%d")
+    arquivo_existe = os.path.isfile("carta_selecionada.txt")
+    if not arquivo_existe:
+        # Criar o arquivo vazio caso não exista
+        with open("carta_selecionada.txt", "w"):
+            pass
+    with open("carta_selecionada.txt", "r") as arquivo:
+        data = arquivo.read()
+    return data == data_str
+
+
+# Marcar a carta como selecionada
+def marcar_carta_selecionada():
+    hoje = date.today()
+    data_str = hoje.strftime("%Y-%m-%d")
+    with open("carta_selecionada.txt", "w") as arquivo:
+        arquivo.write(data_str)
 
 # Criação da janela principal
 janela = tk.Tk()
 janela.title("Leitura Diária de Tarot")
-janela.geometry("600x400")
+janela.geometry("830x475")
+janela.resizable(False, False)
 
 # Criação do fundo de mesa de madeira
 imagem_fundo = ImageTk.PhotoImage(Image.open("imgs/table.png"))
 fundo = tk.Label(janela, image=imagem_fundo)
 fundo.place(x=0, y=0, relwidth=1, relheight=1)
 
-# Criação dos espaços reservados para as cartas
-cartas_selecionadas = obter_cartas_aleatorias()
-espaco1 = tk.Label(janela)
-espaco1.place(x=100, y=100)
-imagem_carta1 = ImageTk.PhotoImage(Image.open(cartas_selecionadas[0]["imagem"]))
-carta1 = tk.Label(espaco1, image=imagem_carta1)
-carta1.pack()
+# Verificar se a carta já foi selecionada hoje
+if not verificar_carta_selecionada():
+    # Criação das cartas
+    cartas_aleatorias = obter_cartas_aleatorias()
+    verso = ImageTk.PhotoImage(Image.open("imgs/back.png"))
+    espaco_cartas = []
+    label_cartas = []
+    for i, carta in enumerate(cartas_aleatorias):
+        espaco_carta = tk.Label(janela)
+        espaco_carta.place(x=40 + (i * 285), y=150)
+        espaco_cartas.append(espaco_carta)
+        imagem_carta = Image.open(carta["imagem"])
+        frente = ImageTk.PhotoImage(imagem_carta)
+        label_carta = tk.Label(espaco_carta, image=verso)
+        label_carta.pack()
+        label_cartas.append(label_carta)
+        label_carta.bind("<Button-1>", lambda event, c=carta, l=label_carta: virar_carta(c, l))
 
-espaco2 = tk.Label(janela)
-espaco2.place(x=250, y=100)
-imagem_carta2 = ImageTk.PhotoImage(Image.open(cartas_selecionadas[1]["imagem"]))
-carta2 = tk.Label(espaco2, image=imagem_carta2)
-carta2.pack()
+    # Marcar a carta como selecionada
+    marcar_carta_selecionada()
 
-espaco3 = tk.Label(janela)
-espaco3.place(x=400, y=100)
-imagem_carta3 = ImageTk.PhotoImage(Image.open(cartas_selecionadas[2]["imagem"]))
-carta3 = tk.Label(espaco3, image=imagem_carta3)
-carta3.pack()
 
-# Botão para exibir a leitura
-botao_leitura = tk.Button(janela, text="Exibir Leitura", command=verificar_data)
-botao_leitura.place(x=260, y=300)
-
-# Texto da leitura
-texto_leitura = tk.Text(janela, width=40, height=10)
-texto_leitura.place(x=180, y=150)
-texto_leitura.configure(state=tk.DISABLED)
 
 janela.mainloop()
