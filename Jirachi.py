@@ -18,7 +18,7 @@ class Jirachi(QWidget):
         # Verifica se o programa já foi executado hoje
         self.check_execution_date()
         
-        #Adiciona ícone ao programa
+        # Adiciona ícone ao programa
         icon = QIcon("srcs/Jirachi.ico")
         self.setWindowIcon(icon)
 
@@ -62,14 +62,16 @@ class Jirachi(QWidget):
             self.card_labels.append(card_label)
 
         # Configuração do texto da carta selecionada
+        # Nome da Carta
         self.card_name_label = QLabel(self)
         self.card_name_label.setGeometry(300, 50, 200, 50)
         self.card_name_label.setAlignment(Qt.AlignCenter)
         self.card_name_label.setStyleSheet("color: white;")
         self.card_name_label.setFont(QFont("Arial", 16, QFont.Bold))
-
+        
+        # Significado da carta
         self.card_meaning_label = QLabel(self)
-        self.card_meaning_label.setGeometry(100, 400, 600, 200)  # Modificação na posição vertical e tamanho do texto de significado
+        self.card_meaning_label.setGeometry(100, 400, 600, 200) 
         self.card_meaning_label.setAlignment(Qt.AlignCenter)
         self.card_meaning_label.setStyleSheet("color: white;")
         self.card_meaning_label.setWordWrap(True)
