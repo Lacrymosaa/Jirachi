@@ -3,12 +3,12 @@ import sys
 import random
 import datetime
 from PyQt5.QtCore import Qt
-from PyQt5.QtGui import QPixmap, QMovie, QFont
+from PyQt5.QtGui import QPixmap, QMovie, QFont, QIcon
 from PyQt5.QtWidgets import QApplication, QWidget, QLabel
 import pygame
 from srcs.Array import cartas
 
-class TarotApp(QWidget):
+class Jirachi(QWidget):
     def __init__(self):
         super().__init__()
 
@@ -17,6 +17,10 @@ class TarotApp(QWidget):
 
         # Verifica se o programa já foi executado hoje
         self.check_execution_date()
+        
+        #Adiciona ícone ao programa
+        icon = QIcon("srcs/Jirachi.ico")
+        self.setWindowIcon(icon)
 
         # Define as cartas iniciais
         self.initialize_cards()
@@ -35,7 +39,7 @@ class TarotApp(QWidget):
     def initUI(self):
         # Configurações da janela principal
         self.setGeometry(100, 100, 800, 600)
-        self.setWindowTitle('Tarot App')
+        self.setWindowTitle('Jirachi')
         self.setFixedSize(800, 600)
 
         # Configura o fundo como um GIF
@@ -69,7 +73,7 @@ class TarotApp(QWidget):
         self.card_meaning_label.setAlignment(Qt.AlignCenter)
         self.card_meaning_label.setStyleSheet("color: white;")
         self.card_meaning_label.setWordWrap(True)
-        self.card_meaning_label.setFont(QFont("Arial", 12))
+        self.card_meaning_label.setFont(QFont("Calibri (corpo)", 12))
 
     def check_execution_date(self):
         # Verifica se o programa já foi executado hoje
@@ -117,6 +121,6 @@ class TarotApp(QWidget):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    tarot_app = TarotApp()
+    tarot_app = Jirachi()
     tarot_app.show()
     sys.exit(app.exec_())
