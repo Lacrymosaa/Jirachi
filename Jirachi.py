@@ -55,7 +55,7 @@ class Jirachi(QWidget):
         self.card_labels = []
         for i in range(3):
             card_label = QLabel(self)
-            card_label.setGeometry(int(spacing + i * (card_width + spacing)), 100, card_width, 284)
+            card_label.setGeometry(int(spacing + i * (card_width + spacing)), 70, card_width, 284)
             card_label.setScaledContents(True)
             card_label.setPixmap(QPixmap("srcs/cartas/back.png"))
             card_label.mousePressEvent = lambda event, index=i: self.card_clicked(index)
@@ -64,14 +64,14 @@ class Jirachi(QWidget):
         # Configuração do texto da carta selecionada
         # Nome da Carta
         self.card_name_label = QLabel(self)
-        self.card_name_label.setGeometry(300, 50, 200, 50)
+        self.card_name_label.setGeometry(300, 5, 200, 80)
         self.card_name_label.setAlignment(Qt.AlignCenter)
         self.card_name_label.setStyleSheet("color: white;")
         self.card_name_label.setFont(QFont("Arial", 16, QFont.Bold))
         
         # Significado da carta
         self.card_meaning_label = QLabel(self)
-        self.card_meaning_label.setGeometry(100, 400, 600, 200) 
+        self.card_meaning_label.setGeometry(100, 370, 600, 200) 
         self.card_meaning_label.setAlignment(Qt.AlignCenter)
         self.card_meaning_label.setStyleSheet("color: white;")
         self.card_meaning_label.setWordWrap(True)
